@@ -1,0 +1,15 @@
+{
+  "name": "io",
+  "repo": "matthewmueller/io",
+  "description": "event emitter build on top of io",
+  "version": "0.0.1",
+  "keywords": ["engine.io", "web sockets", "ws"],
+  "dependencies": {
+    "component/emitter" : "*"
+  },
+  "development": {},
+  "license": "MIT",
+  "scripts": [
+    "index.js"
+  ]
+}
