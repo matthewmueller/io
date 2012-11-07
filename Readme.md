@@ -33,15 +33,15 @@ io.send('comment', comment);
 
 Initialize a new instance of `IO`.
 
-### IO.on(event, fn)
+### #io.on(event, fn)
 
 Listen and respond to an `event`.
 
-### IO.socket
+### #io.socket
 
 Access to the raw engine.io `socket`.
 
-### IO.send(event, message)
+### #io.send(event, message)
 
 Send a `message` through the socket with the given `event`.
 
