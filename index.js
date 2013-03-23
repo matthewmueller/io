@@ -3,7 +3,7 @@
  */
 
 var Emitter = require('emitter'),
-    EIO = window.eio; // TODO: Turn into a component
+    EIO = require('engine.io-client');
 
 /**
  * Export `IO`
@@ -13,11 +13,14 @@ module.exports = IO;
 
 /**
  * Initialize `IO`
+ *
+ * @param {String} uri
+ * @param {Object} opts
  */
 
-function IO(options) {
-  if(!(this instanceof IO)) return new IO(options);
-  var socket = this.socket = new EIO.Socket(options || {});
+function IO(uri, opts) {
+  if(!(this instanceof IO)) return new IO(uri, opts);
+  var socket = this.socket = new EIO(uri, opts);
   Emitter(this);
   socket.on('message', this.message.bind(this));
 }

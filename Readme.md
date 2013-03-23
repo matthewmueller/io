@@ -45,10 +45,6 @@ Access to the raw engine.io `socket`.
 
 Send a `message` through the socket with the given `event`.
 
-## TODO
-
-* engine.io as a component [#71](https://github.com/LearnBoost/engine.io-client/issues/71)
-
 ## License
 
   MIT
