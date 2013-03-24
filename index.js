@@ -3,6 +3,8 @@
  */
 
 var Emitter = require('emitter'),
+    parse = require('url').parse,
+    qs = require('querystring'),
     EIO = require('engine.io');
 
 /**
@@ -20,9 +22,36 @@ module.exports = IO;
 
 function IO(uri, opts) {
   if(!(this instanceof IO)) return new IO(uri, opts);
+  opts = opts || {};
+  uri = this.parse(uri);
   var socket = this.socket = new EIO(uri, opts);
   this.emitter = Emitter({});
   socket.on('message', this.message.bind(this));
+}
+
+/**
+ * Parse the uri. Convert given pathname to a querystring pathname=...
+ *
+ * @param {String} uri
+ */
+
+IO.prototype.parse = function(uri) {
+  var obj = parse(uri),
+      path = obj.pathname,
+      q = obj.query;
+
+  path = path.replace(/^\/|\/$/g, '');
+  if(!path) return uri;
+
+  if(q) {
+    q = qs.parse(q);
+    q['pathname'] = path;
+  } else {
+    q = { pathname : path };
+  }
+
+  q = qs.stringify(q);
+  return obj.protocol + '//' + obj.host + obj.pathname + '?' + q;
 }
 
 /**

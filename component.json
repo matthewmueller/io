@@ -8,7 +8,9 @@
   "keywords": ["engine.io", "web sockets", "ws"],
   "dependencies": {
     "component/emitter" : "*",
-    "LearnBoost/engine.io-client" : "*"
+    "LearnBoost/engine.io-client" : "*",
+    "component/querystring" : "*",
+    "component/url" : "*"
   },
   "development": {},
   "license": "MIT",
