@@ -34,7 +34,7 @@ function IO(uri, opts) {
  * @api public
  */
 
-IO.prototype.send = function() {
+IO.prototype.emit = function() {
   var message = Array.prototype.slice.call(arguments),
       event = message.shift();
 

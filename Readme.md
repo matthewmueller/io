@@ -24,7 +24,7 @@ io.on('comment', function(comment) {...})
 io.socket.on('error', function(err) {...})
 
 // Send a message
-io.send('comment', comment);
+io.emit('comment', comment);
 ```
 
 ## API
@@ -41,7 +41,7 @@ Listen and respond to an `event`.
 
 Access to the raw engine.io `socket`.
 
-### #send(event, message)
+### #emit(event, message)
 
 Send a `message` through the socket with the given `event`.
 
