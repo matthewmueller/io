@@ -3,7 +3,7 @@
  */
 
 var Emitter = require('emitter'),
-    EIO = require('engine.io-client');
+    EIO = require('engine.io');
 
 /**
  * Export `IO`
