@@ -12,26 +12,30 @@
 ## Example
 
 ```js
-var io = IO({
-  host : 'ws.example.com',
-  port : 8080
-});
+var io = IO('localhost:8080/news');
 
 // Custom events
-io.on('comment', function(comment) {...})
+io.on('news', function(news) {...})
 
 // Raw socket messages
 io.socket.on('error', function(err) {...})
 
 // Send a message
-io.emit('comment', comment);
+io.emit('news', news);
 ```
 
 ## API
 
-### IO(options)
+### IO(uri, [options])
 
-Initialize a new instance of `IO`.
+Initialize a new instance of `IO`. IO will pass these parameters into engine.io.
+
+Engine.io squelches pathnames but maintains query parameters, so IO converts any pathname to a querystring to that it can be obtained on the serverside.
+
+```js
+IO('localhost:8080/news/today')
+// internally: new EngineIO('localhost:8080/?pathname=news/today');
+```
 
 ### #on(event, fn)
 
