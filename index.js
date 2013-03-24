@@ -21,8 +21,17 @@ module.exports = IO;
 function IO(uri, opts) {
   if(!(this instanceof IO)) return new IO(uri, opts);
   var socket = this.socket = new EIO(uri, opts);
-  Emitter(this);
+  this.emitter = Emitter({});
   socket.on('message', this.message.bind(this));
+}
+
+/**
+ * On
+ */
+
+IO.prototype.on = function() {
+  this.emitter.on.apply(this.emitter, arguments);
+  return this;
 }
 
 /**
@@ -55,6 +64,6 @@ IO.prototype.emit = function() {
 
 IO.prototype.message = function(message) {
   message = JSON.parse(message);
-  this.emit.apply(this, [message.event].concat(message.message));
+  this.emitter.emit.apply(this.emitter, [message.event].concat(message.message));
   return this;
 };
