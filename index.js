@@ -51,7 +51,8 @@ IO.prototype.parse = function(uri) {
   }
 
   q = qs.stringify(q);
-  return obj.protocol + '//' + obj.host + obj.pathname + '?' + q;
+  uri = uri.split('?')[0];
+  return uri + '?' + q;
 }
 
 /**
