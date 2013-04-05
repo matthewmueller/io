@@ -77,21 +77,38 @@ IO.prototype.on = function() {
  * Send data to the server
  *
  * @param {String} event
- * @param {Mixed, ...} message
+ * @param {Object|String, ...} message
  * @return {IO}
  * @api public
  */
 
-IO.prototype.emit = function() {
-  var message = Array.prototype.slice.call(arguments),
-      event = message.shift();
+IO.prototype.emit = function(event) {
+  var messages = [].slice.call(arguments, 1);
 
   this.socket.send(JSON.stringify({
     event : event,
-    message : message
+    message : messages
   }));
 
   return this;
+};
+
+/**
+ * Send to a specific client
+ *
+ * @param {String} to
+ * @param {String} event
+ * @param {Object|String, ...} message
+ */
+
+IO.prototype.send = function(to, event) {
+  var messages = [].slice.call(arguments, 2);
+
+  this.socket.send(JSON.stringify({
+    to : to,
+    event : event,
+    message : messages
+  }));
 };
 
 /**
