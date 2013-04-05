@@ -43,6 +43,8 @@ IO.prototype.parse = function(uri) {
   path = path.replace(/^\/|\/$/g, '');
   if(!path) return uri;
 
+  this.pathname = path;
+
   if(q) {
     q = qs.parse(q);
     q['pathname'] = path;
