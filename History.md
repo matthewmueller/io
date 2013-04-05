@@ -1,4 +1,11 @@
 
+0.2.0 / 2013-04-05
+==================
+
+  * added io.send method
+  * default to http:// if no protocol given
+  * added pathname
+
 0.1.2 / 2013-03-24
 ==================
 
