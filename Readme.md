@@ -47,7 +47,33 @@ Access to the raw engine.io `socket`.
 
 ### #emit(event, message)
 
-Send a `message` through the socket with the given `event`.
+Send a `message` to all connected clients with the given `event`.
+
+```js
+io.emit('reminder', data);
+
+{
+  event : 'reminder',
+  message : [{...}]
+}
+```
+
+The socket server ultimately decides who the recieves the messages.
+
+### #send(to, event, message)
+
+Send a `message` to a specific client with the given `event`. All this does is add
+a `to` key to the message. It's up to the socket server to do the routing.
+
+```js
+io.send('matt', 'reminder', 'take the noodles off the stove!');
+
+{
+  to : 'matt',
+  event : 'reminder',
+  message : ['take the noodles off the stove']
+}
+```
 
 ## License
 
