@@ -36,15 +36,21 @@ function IO(uri, opts) {
  */
 
 IO.prototype.parse = function(uri) {
-  var obj = parse(uri),
-      path = obj.pathname,
+  var obj = parse(uri);
+
+  // handle if no http://
+  if(!~uri.indexOf(obj.protocol)) {
+    obj = parse(obj.protocol + '//' + uri);
+  }
+
+  var path = obj.pathname,
       q = obj.query;
 
+  // trim "/"
   path = path.replace(/^\/|\/$/g, '');
   if(!path) return uri;
 
-  this.pathname = path;
-
+  // Add to the querystring
   if(q) {
     q = qs.parse(q);
     q['pathname'] = path;
@@ -52,6 +58,7 @@ IO.prototype.parse = function(uri) {
     q = { pathname : path };
   }
 
+  // update the query string
   q = qs.stringify(q);
   uri = uri.split('?')[0];
   return uri + '?' + q;
