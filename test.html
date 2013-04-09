@@ -1,0 +1,21 @@
+<html>
+<head>
+  <title>IO component</title>
+</head>
+<body>
+  <h1>IO component</h1>
+  <script src="../build/build.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    var IO = require('io');
+
+    var io = IO('http://ws.mat.io:80/io');
+
+    io.on('hello', function(msg, another) {
+      console.log(msg, another);
+    });
+
+    io.emit('hello', 'lol', 'cool')
+
+  </script>
+</body>
+</html>

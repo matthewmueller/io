@@ -3,6 +3,7 @@
  */
 
 var Emitter = require('emitter'),
+    emit = Emitter.prototype.emit,
     parse = require('url').parse,
     qs = require('querystring'),
     EIO = require('engine.io');
@@ -22,11 +23,30 @@ module.exports = IO;
 
 function IO(uri, opts) {
   if(!(this instanceof IO)) return new IO(uri, opts);
+  if(uri) this.connect(uri, opts);
+}
+
+/**
+ * Mixin Emitter
+ */
+
+Emitter(IO.prototype);
+
+/**
+ * Connect
+ *
+ * @param {String} uri
+ * @param {Object} opts
+ * @return {IO}
+ * @api public
+ */
+
+IO.prototype.connect = function(uri, opts) {
   opts = opts || {};
   uri = this.parse(uri);
   var socket = this.socket = new EIO(uri, opts);
-  this.emitter = Emitter({});
   socket.on('message', this.message.bind(this));
+  return this;
 }
 
 /**
@@ -65,15 +85,6 @@ IO.prototype.parse = function(uri) {
 }
 
 /**
- * On
- */
-
-IO.prototype.on = function() {
-  this.emitter.on.apply(this.emitter, arguments);
-  return this;
-}
-
-/**
  * Send data to the server
  *
  * @param {String} event
@@ -84,7 +95,6 @@ IO.prototype.on = function() {
 
 IO.prototype.emit = function(event) {
   var messages = [].slice.call(arguments, 1);
-
   this.socket.send(JSON.stringify({
     event : event,
     message : messages
@@ -120,6 +130,6 @@ IO.prototype.send = function(to, event) {
 
 IO.prototype.message = function(message) {
   message = JSON.parse(message);
-  this.emitter.emit.apply(this.emitter, [message.event].concat(message.message));
+  emit.apply(this, [message.event].concat(message.message));
   return this;
 };
