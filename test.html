@@ -8,14 +8,13 @@
   <script type="text/javascript">
     var IO = require('io');
 
-    var io = IO('http://ws.mat.io:80/io');
+    var io = IO('http://localhost:9000/io');
 
     io.on('hello', function(msg, another) {
       console.log(this, msg, another);
     });
 
     io.emit('hello', 'lol', 'cool')
-
   </script>
 </body>
 </html>

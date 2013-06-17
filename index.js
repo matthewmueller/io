@@ -2,11 +2,21 @@
  * Module Dependencies
  */
 
-var Emitter = require('emitter'),
-    emit = Emitter.prototype.emit,
-    parse = require('url').parse,
-    qs = require('querystring'),
-    EIO = require('engine.io');
+var Emitter, qs, EIO;
+
+// client / server support
+try {
+  Emitter = require('emitter');
+  qs = require('querystring');
+  EIO = require('engine.io');
+} catch(e) {
+  Emitter = require('emitter-component');
+  qs = require('qs');
+  EIO = require('engine.io-client');
+}
+
+var emit = Emitter.prototype.emit;
+var parse = require('url').parse;
 
 /**
  * Export `IO`
