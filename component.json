@@ -4,7 +4,7 @@
   "author": "Matt Mueller",
   "twitter": "@mattmueller",
   "description": "event emitter build on top of io",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "keywords": ["engine.io", "web sockets", "ws"],
   "dependencies": {
     "component/emitter" : "*",
