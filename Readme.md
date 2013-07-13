@@ -37,15 +37,15 @@ IO('localhost:8080/news/today')
 // internally: new EngineIO('localhost:8080/?pathname=news/today');
 ```
 
-### #on(event, fn)
+### io#on(event, fn)
 
 Listen and respond to an `event`.
 
-### #socket
+### io#socket
 
 Access to the raw engine.io `socket`. Useful to listen to events such as `open`, `close`, etc.
 
-### #emit(event, message)
+### io#emit(event, message)
 
 Send a `message` to all connected clients with the given `event`.
 
@@ -58,7 +58,7 @@ io.emit('reminder', data);
 }
 ```
 
-### #channel(channel)
+### io#channel(channel)
 
 Split a single socket into multiple channels, effectively creating a new socket without another connection.
 
@@ -73,6 +73,10 @@ superagent.emit('install');
 cheerio.on('complete', fn);
 superagent.on('complete', fn);
 ```
+
+### io#close()
+
+Close the connection
 
 ## Tests
 
