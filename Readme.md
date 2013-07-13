@@ -30,7 +30,7 @@ io.emit('news', news);
 
 Initialize a new instance of `IO`. IO will pass these parameters into engine.io.
 
-Engine.io squelches pathnames but maintains query parameters, so IO converts any pathname to a querystring to that it can be obtained on the serverside.
+Engine.io squelches pathnames but maintains query parameters, so IO converts any pathname to a querystring to that it can be obtained on the server-side.
 
 ```js
 IO('localhost:8080/news/today')
@@ -43,7 +43,7 @@ Listen and respond to an `event`.
 
 ### #socket
 
-Access to the raw engine.io `socket`.
+Access to the raw engine.io `socket`. Useful to listen to events such as `open`, `close`, etc.
 
 ### #emit(event, message)
 
@@ -58,22 +58,27 @@ io.emit('reminder', data);
 }
 ```
 
-The socket server ultimately decides who the recieves the messages.
+### #channel(channel)
 
-### #send(to, event, message)
-
-Send a `message` to a specific client with the given `event`. All this does is add
-a `to` key to the message. It's up to the socket server to do the routing.
+Split a single socket into multiple channels, effectively creating a new socket without another connection.
 
 ```js
-io.send('matt', 'reminder', 'take the noodles off the stove!');
+var io = IO('http://localhost:8080');
+var cheerio = io.channel('cheerio');
+var superagent = io.channel('superagent');
 
-{
-  to : 'matt',
-  event : 'reminder',
-  message : ['take the noodles off the stove']
-}
+cheerio.emit('install');
+superagent.emit('install');
+
+cheerio.on('complete', fn);
+superagent.on('complete', fn);
 ```
+
+## Tests
+
+    make test
+
+  > Note you'll need [serve](http://github.com/visionmedia/serve)
 
 ## License
 

@@ -115,6 +115,14 @@ IO.prototype.emit = function(event, json) {
   return this;
 };
 
+/**
+ * Close the socket
+ */
+
+IO.prototype.close = function() {
+  this.socket.close();
+};
+
 // /**
 //  * Send to a specific client
 //  *
@@ -142,8 +150,12 @@ IO.prototype.emit = function(event, json) {
 
 IO.prototype.message = function(message) {
   message = JSON.parse(message);
-  if (message.channel && message.channel != this._channel) return this;
-  emit.apply(this, [message.event].concat(message.message));
+  var event = message.event;
+  var channel = message.channel;
+  delete message.event;
+  delete message.channel;
+  if (channel && channel != this._channel) return this;
+  emit.apply(this, [event].concat(message));
   return this;
 };
 
