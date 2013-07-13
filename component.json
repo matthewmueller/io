@@ -12,7 +12,11 @@
     "component/querystring" : "*",
     "component/url" : "*"
   },
-  "development": {},
+  "development": {
+    "component/assert": "*",
+
+    "visionmedia/mocha-matrix": "*"
+  },
   "license": "MIT",
   "scripts": [
     "index.js"

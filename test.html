@@ -8,7 +8,7 @@
   <script type="text/javascript">
     var IO = require('io');
 
-    var io = IO('http://localhost:9000/io');
+    var io = IO('http://localhost:9777/');
 
     io.on('hello', function(msg, another) {
       console.log(this, msg, another);
