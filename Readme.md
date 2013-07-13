@@ -1,9 +1,9 @@
 
 # io
 
-  event-emitter build on top of [engine.io](https://github.com/learnboost/engine.io)
+  higher-level [engine.io](http://github.com/learnboost/engine.io) client.
 
-  Requires the engine.io server to include the `event` key in their response.
+  [io-server](http://github.com/matthewmueller/io-server) is the recommended socket server, but any server that has `event` and `channel` events would work fine.
 
 ## Installation
 
@@ -79,6 +79,10 @@ superagent.on('complete', fn);
     make test
 
   > Note you'll need [serve](http://github.com/visionmedia/serve)
+
+## TODO
+
+* Bring back support for multiple arguments: `io.emit('news', news, user)`
 
 ## License
 
