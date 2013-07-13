@@ -47,15 +47,10 @@ Access to the raw engine.io `socket`. Useful to listen to events such as `open`,
 
 ### io#emit(event, message)
 
-Send a `message` to all connected clients with the given `event`.
+Send a `message` to all connected clients (including itself) with the given `event`.
 
 ```js
 io.emit('reminder', data);
-
-{
-  event : 'reminder',
-  message : [{...}]
-}
 ```
 
 ### io#channel(channel)
