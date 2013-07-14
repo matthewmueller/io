@@ -32,6 +32,12 @@ var slice = [].slice;
 module.exports = IO;
 
 /**
+ * List of channels
+ */
+
+var channels = [];
+
+/**
  * Initialize `IO`
  *
  * @param {String} uri
@@ -66,6 +72,12 @@ IO.prototype.connect = function(uri, opts) {
   uri = this.parse(uri);
   this.socket = new EIO(uri, opts);
   this.bind();
+
+  // add socket to all channels (if any)
+  for (var i = 0, channel; channel = channels[i]; i++) {
+    channel.socket = this.socket;
+  }
+
   return this;
 };
 
@@ -106,7 +118,7 @@ IO.prototype.parse = function(uri) {
   // Add to the querystring
   if(q) {
     q = qs.parse(q);
-    q['pathname'] = path;
+    q.pathname = path;
   } else {
     q = { pathname : path };
   }
@@ -169,12 +181,18 @@ IO.prototype.message = function(str) {
  * Channel support
  *
  * @param {String} channel
+ * @return {IO}
  */
 
 IO.prototype.channel = function(channel) {
   channel = channel || uid(6);
-  return new IO(false, {
+
+  var io = new IO(false, {
     socket: this.socket,
     channel: channel
   });
+
+  // add channel to list
+  channels.push(io);
+  return io;
 };
