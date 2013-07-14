@@ -73,9 +73,10 @@ IO.prototype.connect = function(uri, opts) {
   this.socket = new EIO(uri, opts);
   this.bind();
 
-  // add socket to all channels (if any)
+  // update socket on channels (if any)
   for (var i = 0, channel; channel = channels[i]; i++) {
     channel.socket = this.socket;
+    channel.bind();
   }
 
   return this;
