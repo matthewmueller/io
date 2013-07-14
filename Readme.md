@@ -29,12 +29,21 @@ io.emit('news', news);
 
 Initialize a new instance of `IO`. IO will pass these parameters into engine.io.
 
-Engine.io squelches pathnames but maintains query parameters, so IO converts any pathname to a querystring to that it can be obtained on the server-side.
+#### Pooling
+
+IO supports url-based pooling or "rooms". If you connect with a pathname, IO will send the pathname to the server as a querystring. It's the responsibilty of the server to place these connections into rooms. [io-server](http://github.com/matthewmueller/io-server) supports this kind of pooling.
 
 ```js
 IO('localhost:8080/news/today')
 // internally: new EngineIO('localhost:8080/?pathname=news/today');
+
+IO('localhost:8080/news/tomorrow') // different pool than `/news/today`
+IO('localhost:8080/news') // gets updates from both `/news/today` and `/news/tomorrow`
 ```
+
+** Why pathname => querystring? **
+
+Engine.io squelches pathnames but maintains query parameters, so IO converts any pathname to a querystring to that it can be obtained on the server-side.
 
 ### io#on(event, fn)
 
@@ -52,9 +61,11 @@ Send a `message` to all connected clients (including itself) with the given `eve
 io.emit('reminder', data);
 ```
 
-### io#channel(channel)
+### io#channel([channel])
 
-Split a single socket into multiple channels, effectively creating a new socket without another connection.
+Split a single socket into multiple channels. In other words, `#channel()` creates a fresh socket  without another connection.
+
+If no `channel` is given, a unique id is used.
 
 ```js
 var io = IO('http://localhost:8080');
