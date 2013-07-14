@@ -1,4 +1,12 @@
 
+0.3.1 / 2013-07-14
+==================
+
+ * test channel uids
+ * supports multiple args and strings
+ * fixed issue with channels
+ * more tests
+
 0.2.0 / 2013-04-05
 ==================
 
