@@ -4,7 +4,8 @@
   "dependencies": {
     "qs": "~0.6.5",
     "emitter-component": "~1.0.0",
-    "engine.io-client": "~0.6.2"
+    "engine.io-client": "~0.6.2",
+    "uid": "*"
   },
   "devDependencies": {
     "express": "*",

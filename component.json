@@ -10,12 +10,11 @@
     "component/emitter" : "*",
     "LearnBoost/engine.io-client" : "*",
     "component/querystring" : "*",
-    "component/url" : "*"
+    "component/url" : "*",
+    "matthewmueller/uid": "*"
   },
   "development": {
-    "component/assert": "*",
-
-    "visionmedia/mocha-matrix": "*"
+    "component/assert": "*"
   },
   "license": "MIT",
   "scripts": [

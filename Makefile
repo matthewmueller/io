@@ -8,7 +8,7 @@ test: build
 	npm install .
 	serve -p 9000 &
 	node test/server.js &
-	open http://localhost:9000/test/
+	mocha test/
 
 clean:
 	rm -fr build components template.js

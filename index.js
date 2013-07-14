@@ -4,7 +4,10 @@
 
 var Emitter, qs, EIO;
 
-// client / server support
+/**
+ * Platform support
+ */
+
 try {
   Emitter = require('emitter');
   qs = require('querystring');
@@ -19,6 +22,8 @@ var emit = Emitter.prototype.emit;
 var on = Emitter.prototype.on;
 var once = Emitter.prototype.once;
 var parse = require('url').parse;
+var uid = require('uid');
+var slice = [].slice;
 
 /**
  * Export `IO`
@@ -38,8 +43,8 @@ function IO(uri, opts) {
   opts = opts || {};
   if (uri) this.connect(uri, opts);
   if (opts.socket) this.socket = opts.socket;
-  if (opts.channel) this._channel = opts.channel;
-  if (this.socket) this.socket.on('message', this.message.bind(this));
+  if (opts.channel) this.$channel = opts.channel;
+  if (this.socket) this.bind();
 }
 
 /**
@@ -60,6 +65,20 @@ Emitter(IO.prototype);
 IO.prototype.connect = function(uri, opts) {
   uri = this.parse(uri);
   this.socket = new EIO(uri, opts);
+  this.bind();
+  return this;
+};
+
+/**
+ * Setup bindings
+ *
+ * @api private
+ */
+
+IO.prototype.bind = function() {
+  if (this.bound) return;
+  this.socket.on('message', this.message.bind(this));
+  this.bound = true;
   return this;
 };
 
@@ -107,10 +126,11 @@ IO.prototype.parse = function(uri) {
  * @api public
  */
 
-IO.prototype.emit = function(event, json) {
-  json = json || {};
-  json.event = event;
-  if (this._channel) json.channel = this._channel;
+IO.prototype.emit = function(event) {
+  var json = {};
+  json.$event = event;
+  json.$message = slice.call(arguments, 1);
+  if (this.$channel) json.$channel = this.$channel;
   this.socket.send(JSON.stringify(json));
   return this;
 };
@@ -123,24 +143,6 @@ IO.prototype.close = function() {
   this.socket.close();
 };
 
-// /**
-//  * Send to a specific client
-//  *
-//  * @param {String} to
-//  * @param {String} event
-//  * @param {Object|String, ...} message
-//  */
-
-// IO.prototype.send = function(to, event) {
-//   var messages = [].slice.call(arguments, 2);
-
-//   this.socket.send(JSON.stringify({
-//     to : to,
-//     event : event,
-//     message : messages
-//   }));
-// };
-
 /**
  * Called when a message is recieved
  *
@@ -148,34 +150,20 @@ IO.prototype.close = function() {
  * @return {IO}
  */
 
-IO.prototype.message = function(message) {
-  message = JSON.parse(message);
-  var event = message.event;
-  var channel = message.channel;
-  delete message.event;
-  delete message.channel;
-  if (channel && channel != this._channel) return this;
+IO.prototype.message = function(str) {
+  var json = JSON.parse(str);
+  var event = json.$event;
+  var message = json.$message;
+  var channel = json.$channel;
+
+  // ignore message if channel doesnt match or
+  // no channel given for channeled socket
+  if (this.$channel && !channel) return this;
+  else if (channel && channel != this.$channel) return this;
+
   emit.apply(this, [event].concat(message));
   return this;
 };
-
-/**
- * Listen to a specific event
- */
-
-// IO.prototype.on = function(event, fn) {
-//   event = (this.channel) ? [this.channel,event].join(':') : event;
-//   on.call(this, event, fn);
-// };
-
-/**
- * Listen to a specific event once
- */
-
-// IO.prototype.once = function(event, fn) {
-//   event = (this.channel) ? [this.channel,event].join(':') : event;
-//   once.call(this, event, fn);
-// };
 
 /**
  * Channel support
@@ -184,6 +172,7 @@ IO.prototype.message = function(message) {
  */
 
 IO.prototype.channel = function(channel) {
+  channel = channel || uid(6);
   return new IO(false, {
     socket: this.socket,
     channel: channel

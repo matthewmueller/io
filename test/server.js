@@ -38,10 +38,22 @@ es.on('connection', IO);
  * Intercept sockets
  */
 
-IO.on('cool', function(message) {
+IO.on('cool', function(message, whatever) {
   message.id = 'cool';
   this.emit('cool', message);
 });
+
+IO.on('ok', function(hello) {
+  this.emit('cool', hello);
+});
+
+IO.on('lol', function(hello, hi) {
+  this.emit('cool', hello, hi);
+});
+
+IO.on('channel', function(lol) {
+
+})
 
 /**
  * Listen if we are calling this file directly

@@ -1,4 +1,9 @@
-var IO = require('io');
+try {
+  var IO = require('io');
+} catch(e) {
+  var IO = require('../');
+}
+
 var host = 'http://localhost:9777';
 var assert = require('assert');
 
@@ -8,25 +13,60 @@ describe('IO', function() {
   beforeEach(function(done) {
     io = IO(host);
     io.socket.once('open', function() {
-      console.log('opened!');
       done();
     });
   });
 
   afterEach(function(done) {
     io.socket.once('close', function() {
-      console.log('zzz');
       done();
     });
     io.close();
   });
 
-  describe('io#parse(url)', function() {
-    it('parse(/)', function() {
-      assert('/' == io.parse('/'));
+  // describe('io#parse(url)', function() {
+  //   it('parse(/)', function() {
+  //     assert('/' == io.parse('/'));
+  //   });
+  // });
+
+  describe('io#emit', function() {
+    it('should support strings', function(done) {
+      io.on('hi', function(str) {
+        assert('string' == typeof str);
+        assert('hello' == str);
+        done();
+      });
+
+      io.emit('hi', 'hello');
+    });
+
+    it('should support objects', function(done) {
+      io.on('hi', function(obj) {
+        assert(2 == Object.keys(obj).length);
+        assert('a' == obj.a);
+        assert('b' == obj.b);
+        done();
+      });
+
+      io.emit('hi', {
+        a: 'a',
+        b: 'b'
+      });
+    });
+
+    it('should support many arguments', function(done) {
+      io.on('hi', function(hello, cool) {
+        assert('string' == typeof hello);
+        assert('string' == typeof cool);
+        assert('hello' == hello);
+        assert('cool' == cool);
+        done();
+      });
+
+      io.emit('hi', 'hello', 'cool');
     });
   });
-
 
   describe('io#channel(ch)', function() {
     it('io#channel(ch)', function(done) {
@@ -43,6 +83,44 @@ describe('IO', function() {
       });
 
       test.emit('hi');
+    });
+
+    it('should play ignore others', function(done) {
+      var a = io.channel('a');
+      var b = io.channel('b');
+
+      a.on('hi', function() {
+        done(new Error('a should not have fired'));
+      });
+
+      b.on('hi', function() {
+        setTimeout(done, 200);
+      });
+
+      io.on('hi', function() {
+        done(new Error('io should not have fired'));
+      });
+
+      b.emit('hi');
+    });
+
+    it('should play ignore others', function(done) {
+      var a = io.channel('a');
+      var b = io.channel('b');
+
+      a.on('hi', function() {
+        done(new Error('a should not have fired'));
+      });
+
+      b.on('hi', function() {
+        done(new Error('b should not have fired'));
+      });
+
+      io.on('hi', function() {
+        setTimeout(done, 200);
+      });
+
+      io.emit('hi');
     });
   });
 
@@ -116,13 +194,53 @@ describe('IO', function() {
 
   describe('server intercept', function() {
     it('should intercept "cool" message', function(done) {
-      io.emit('cool', { message: 'hi' });
-
       io.on('cool', function(message) {
         assert('hi' == message.message);
         assert('cool' == message.id);
         done();
       });
+
+      io.emit('cool', { message: 'hi' });
+    });
+
+    it('should work with strings', function(done) {
+      io.on('cool', function(hello) {
+        assert('string' == typeof hello);
+        assert('hello' == hello);
+        done();
+      });
+
+      io.emit('ok', 'hello');
+    });
+
+    it('should work with multiple args', function(done) {
+      io.on('cool', function(hello, hi) {
+        assert('string' == typeof hello);
+        assert('string' == typeof hi);
+        assert('hello' == hello);
+        assert('hi' == hi);
+        done();
+      });
+
+      io.emit('lol', 'hello', 'hi');
+    });
+
+    it('should play nice with channels', function(done) {
+      var test = io.channel('test');
+
+      io.on('cool', function(hello, hi) {
+        done(new Error('should not have been called'));
+      });
+
+      test.on('cool', function(hello, hi) {
+        assert('string' == typeof hello);
+        assert('string' == typeof hi);
+        assert('hello' == hello);
+        assert('hi' == hi);
+        setTimeout(done, 200);
+      });
+
+      test.emit('lol', 'hello', 'hi');
     });
   });
 });
