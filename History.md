@@ -1,4 +1,9 @@
 
+0.3.2 / 2013-07-14
+==================
+
+ * update channels with socket on connection (allows for optimistic channels)
+
 0.3.1 / 2013-07-14
 ==================
 
