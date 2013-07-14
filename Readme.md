@@ -1,4 +1,3 @@
-
 # io
 
   higher-level [engine.io](http://github.com/learnboost/engine.io) client.
@@ -81,7 +80,7 @@ Close the connection
 
 ## TODO
 
-* Bring back support for multiple arguments: `io.emit('news', news, user)`
+* Fix pathname support on node client
 
 ## License
 
