@@ -41,7 +41,7 @@ IO('localhost:8080/news/tomorrow') // different pool than `/news/today`
 IO('localhost:8080/news') // gets updates from both `/news/today` and `/news/tomorrow`
 ```
 
-** Why pathname => querystring? **
+**Why pathname => querystring?**
 
 Engine.io squelches pathnames but maintains query parameters, so IO converts any pathname to a querystring to that it can be obtained on the server-side.
 
