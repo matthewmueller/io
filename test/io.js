@@ -122,6 +122,21 @@ describe('IO', function() {
 
       io.emit('hi');
     });
+
+    it('channel() should use uids', function(done) {
+      var a = io.channel();
+      var b = io.channel();
+
+      a.on('hi', function() {
+        setTimeout(done, 200);
+      });
+
+      b.on('hi', function() {
+        done(new Error('b should not have fired'));
+      });
+
+      a.emit('hi');
+    });
   });
 
   describe('io(path)', function() {
