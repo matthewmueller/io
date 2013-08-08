@@ -24,6 +24,12 @@ describe('IO', function() {
     io.close();
   });
 
+  describe('io(url)', function() {
+    it('io.url == host', function() {
+      assert(io.url == host);
+    });
+  });
+
   // describe('io#parse(url)', function() {
   //   it('parse(/)', function() {
   //     assert('/' == io.parse('/'));

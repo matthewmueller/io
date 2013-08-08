@@ -40,14 +40,15 @@ var channels = [];
 /**
  * Initialize `IO`
  *
- * @param {String} uri
+ * @param {String} url
  * @param {Object} opts
  */
 
-function IO(uri, opts) {
-  if (!(this instanceof IO)) return new IO(uri, opts);
+function IO(url, opts) {
+  if (!(this instanceof IO)) return new IO(url, opts);
   opts = opts || {};
-  if (uri) this.connect(uri, opts);
+  this.connected = false;
+  if (url) this.connect(url, opts);
   if (opts.socket) this.socket = opts.socket;
   if (opts.channel) this.$channel = opts.channel;
   if (this.socket) this.bind();
@@ -62,15 +63,16 @@ Emitter(IO.prototype);
 /**
  * Connect
  *
- * @param {String} uri
+ * @param {String} url
  * @param {Object} opts
  * @return {IO}
  * @api public
  */
 
-IO.prototype.connect = function(uri, opts) {
-  uri = this.parse(uri);
-  this.socket = new EIO(uri, opts);
+IO.prototype.connect = function(url, opts) {
+  this.url = url;
+  url = this.parse(url);
+  this.socket = new EIO(url, opts);
   this.bind();
 
   // update socket on channels (if any)
@@ -90,23 +92,27 @@ IO.prototype.connect = function(uri, opts) {
 
 IO.prototype.bind = function() {
   if (this.bound) return;
+  var self = this;
   this.socket.on('message', this.message.bind(this));
+  this.socket.once('open', function() {
+    self.connected = true;
+  });
   this.bound = true;
   return this;
 };
 
 /**
- * Parse the uri. Convert given pathname to a querystring pathname=...
+ * Parse the url. Convert given pathname to a querystring pathname=...
  *
- * @param {String} uri
+ * @param {String} url
  */
 
-IO.prototype.parse = function(uri) {
-  var obj = parse(uri);
+IO.prototype.parse = function(url) {
+  var obj = parse(url);
 
   // handle if no http://
-  if(!~uri.indexOf(obj.protocol)) {
-    obj = parse(obj.protocol + '//' + uri);
+  if(!~url.indexOf(obj.protocol)) {
+    obj = parse(obj.protocol + '//' + url);
   }
 
   var path = obj.pathname,
@@ -114,7 +120,7 @@ IO.prototype.parse = function(uri) {
 
   // trim "/"
   path = path.replace(/^\/|\/$/g, '');
-  if(!path) return uri;
+  if(!path) return url;
 
   // Add to the querystring
   if(q) {
@@ -126,8 +132,8 @@ IO.prototype.parse = function(uri) {
 
   // update the query string
   q = qs.stringify(q);
-  uri = uri.split('?')[0];
-  return uri + '?' + q;
+  url = url.split('?')[0];
+  return url + '?' + q;
 };
 
 /**
@@ -187,6 +193,11 @@ IO.prototype.message = function(str) {
 
 IO.prototype.channel = function(channel) {
   channel = channel || uid(6);
+
+  // splitting an already split channel
+  if (this.$channel) {
+    channel = this.$channel + ':' + channel;
+  }
 
   var io = new IO(false, {
     socket: this.socket,
