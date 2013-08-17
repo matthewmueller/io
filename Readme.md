@@ -79,6 +79,14 @@ cheerio.on('complete', fn);
 superagent.on('complete', fn);
 ```
 
+You can also split an already split socket:
+
+```
+var script = io.channel('scriptID');
+var cheerio = script.channel('cheerio');
+console.log(cheerio.$channel) // scriptID:cheerio
+```
+
 ### io#close()
 
 Close the connection
