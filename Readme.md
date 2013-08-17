@@ -81,7 +81,7 @@ superagent.on('complete', fn);
 
 You can also split an already split socket:
 
-```
+```js
 var script = io.channel('scriptID');
 var cheerio = script.channel('cheerio');
 console.log(cheerio.$channel) // scriptID:cheerio
