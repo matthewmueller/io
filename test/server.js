@@ -7,7 +7,7 @@ var express = require('express'),
     IO = require('io-server'),
     app = express(),
     es = new engine.Server(),
-    server = require('http').createServer(app);
+    server = module.exports = require('http').createServer(app);
 
 /**
  * Handle the upgrade
@@ -22,7 +22,6 @@ server.on('upgrade', function(req, socket, head) {
  */
 
 app.configure(function() {
-  app.use(express.logger('dev'));
   app.use(express.query());
   app.use('/engine.io', es.handleRequest.bind(es));
   app.use(express.errorHandler());
@@ -53,7 +52,11 @@ IO.on('lol', function(hello, hi) {
 
 IO.on('channel', function(lol) {
 
-})
+});
+
+IO.on('disconnect', function() {
+  this.socket.close();
+});
 
 /**
  * Listen if we are calling this file directly
@@ -61,6 +64,7 @@ IO.on('channel', function(lol) {
 
 if(!module.parent) {
   var port = process.argv[2] || 9777;
-  server.listen(port);
-  console.log('Server started on port', port);
+  server.listen(port, function() {
+    console.log('Server started on port', port);
+  });
 }

@@ -9,6 +9,14 @@ var assert = require('assert');
 
 describe('IO', function() {
   var io;
+  var server;
+
+  before(function(done) {
+    server = require('./server');
+    server.listen(9777, function() {
+      done();
+    });
+  });
 
   beforeEach(function(done) {
     io = IO(host);
@@ -18,6 +26,7 @@ describe('IO', function() {
   });
 
   afterEach(function(done) {
+    if ('closed' == io.socket.readyState) return done();
     io.socket.once('close', function() {
       done();
     });
@@ -29,12 +38,6 @@ describe('IO', function() {
       assert(io.url == host);
     });
   });
-
-  // describe('io#parse(url)', function() {
-  //   it('parse(/)', function() {
-  //     assert('/' == io.parse('/'));
-  //   });
-  // });
 
   describe('io#emit', function() {
     it('should support strings', function(done) {
@@ -202,7 +205,7 @@ describe('IO', function() {
       });
 
       setTimeout(function() {
-        if (count == 0 && count2 == 0) done();
+        if (count === 0 && count2 === 0) done();
         else done(new Error('wrong number of emitted events'));
       }, 500);
 
@@ -211,6 +214,25 @@ describe('IO', function() {
       io1.emit('hello');
     });
 
+  });
+
+  describe('io.on(event, fn)', function() {
+    it('io should emit "socket open", when socket is opened', function(done) {
+      var io1 = IO();
+
+      io1.on('socket open', function() {
+        done();
+      });
+
+      io1.connect(host + '/1');
+    });
+
+    it('io should emit "socket close", when socket is closed', function(done) {
+      io.on('socket close', function() {
+        done();
+      });
+      io.emit('disconnect');
+    });
   });
 
   describe('server intercept', function() {

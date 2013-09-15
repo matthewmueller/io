@@ -97,6 +97,18 @@ IO.prototype.bind = function() {
   this.socket.once('open', function() {
     self.connected = true;
   });
+
+  function emit(event) {
+    return function() {
+      var args = [event].concat(slice.call(arguments));
+      self._emit.apply(self, args);
+    };
+  }
+
+  this.socket.on('open', emit('socket open'));
+  this.socket.on('close', emit('socket close'));
+  this.socket.on('error', emit('socket error'));
+
   this.bound = true;
   return this;
 };
@@ -135,6 +147,12 @@ IO.prototype.parse = function(url) {
   url = url.split('?')[0];
   return url + '?' + q;
 };
+
+/**
+ * Original emitter
+ */
+
+IO.prototype._emit = IO.prototype.emit;
 
 /**
  * Send data to the server
