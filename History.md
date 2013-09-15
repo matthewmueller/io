@@ -1,4 +1,9 @@
 
+0.4.0 / 2013-09-15 
+==================
+
+ * added 'socket open', 'socket close', and 'socket error' events
+
 0.3.4 / 2013-08-08
 ==================
 
