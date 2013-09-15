@@ -5,10 +5,8 @@ components: component.json
 	@component install --dev
 
 test: build
-	npm install .
-	serve -p 9000 &
-	node test/server.js &
-	mocha test/
+	@npm install .
+	@mocha test
 
 clean:
 	rm -fr build components template.js
