@@ -8,7 +8,7 @@
   "keywords": ["engine.io", "web sockets", "ws"],
   "dependencies": {
     "component/emitter" : "*",
-    "LearnBoost/engine.io-client" : "*",
+    "LearnBoost/engine.io-client" : "0.7.9",
     "component/querystring" : "*",
     "component/url" : "*",
     "matthewmueller/uid": "*"
